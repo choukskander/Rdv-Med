@@ -1392,3 +1392,75 @@ exports.getDoctorsBySpecialty = asyncHandler(async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des données.' });
   }
 });
+
+// Fonction pour demander une réinitialisation
+
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// Fonction pour demander une réinitialisation
+exports.forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: "Aucun utilisateur trouvé avec cet email." });
+  }
+
+  // Générer un token de réinitialisation (valide 10 minutes)
+  const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '10m' });
+  
+  // Envoyer l'email
+  const resetUrl = `${FRONTEND_URL}/reset-password?token=${resetToken}`;
+  
+  const subject = 'Réinitialisation de votre mot de passe';
+  const text = `Bonjour ${user.prenom},\n\nPour réinitialiser votre mot de passe, cliquez sur ce lien : ${resetUrl}\n\nCe lien expirera dans 10 minutes.\n\nSi vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email.\n\nCordialement,\nL'équipe Rdv-Med`;
+  const html = `
+    <h2>Bonjour ${user.prenom},</h2>
+    <p>Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous :</p>
+    <p><a href="${resetUrl}">Réinitialiser mon mot de passe</a></p>
+    <p><small>Ce lien expirera dans 10 minutes.</small></p>
+    <p>Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email.</p>
+    <p>Cordialement,<br>L'équipe Rdv-Med</p>
+  `;
+
+  try {
+    await sendEmail({ to: user.email, subject, text, html });
+    res.json({ message: "Un email de réinitialisation a été envoyé." });
+  } catch (error) {
+    console.error('Error sending reset email:', error);
+    return res.status(500).json({ message: "Erreur lors de l'envoi de l'email de réinitialisation." });
+  }
+});
+
+// Fonction pour réinitialiser le mot de passe
+exports.resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ message: "Token et nouveau mot de passe requis." });
+  }
+
+  try {
+    // Vérifier le token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Trouver l'utilisateur
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé." });
+    }
+
+    // Hasher le nouveau mot de passe
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Mot de passe réinitialisé avec succès." });
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(400).json({ message: "Le lien de réinitialisation a expiré." });
+    }
+    return res.status(400).json({ message: "Token invalide." });
+  }
+});

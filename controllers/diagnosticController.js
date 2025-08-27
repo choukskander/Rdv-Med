@@ -2,24 +2,42 @@ const asyncHandler = require('express-async-handler');
 const { PythonShell } = require('python-shell');
 const Symptom = require('../models/Symptom');
 const path = require('path');
+const { execSync } = require('child_process'); // Pour exécuter une commande système
 
-// Fonction pour normaliser les chaînes (remplacer les accents et les espaces)
+// Fonction pour normaliser les chaînes
 const normalizeString = (str) => {
   return str
     .toLowerCase()
-    .normalize('NFD') // Décomposer les caractères accentués
-    .replace(/[\u0300-\u036f]/g, '') // Supprimer les diacritiques (accents)
-    .replace(/\s+/g, '_'); // Remplacer les espaces par des underscores
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '_');
+};
+
+// Fonction pour détecter le chemin de Python
+const getPythonPath = () => {
+  try {
+    const pythonPath = execSync('where python', { encoding: 'utf8' }).split('\n')[0].trim();
+    if (pythonPath && require('fs').existsSync(pythonPath)) {
+      console.log(`✅ Python path detected: ${pythonPath}`);
+      return pythonPath;
+    }
+    throw new Error('Python not found in system PATH');
+  } catch (error) {
+    console.error('❌ Error detecting Python path:', error.message);
+    throw new Error('Python executable not found. Please install Python and ensure it is in your system PATH.');
+  }
 };
 
 exports.getSymptoms = asyncHandler(async (req, res) => {
   const { lang } = req.params;
   console.log(`Récupération des symptômes pour la langue : ${lang}`);
+  console.log('Fichier chargé :', __filename);
   const symptoms = await Symptom.find({ language: lang }).select('name');
   res.json(symptoms.map(s => s.name));
 });
 
 exports.diagnose = asyncHandler(async (req, res) => {
+  console.log('Fichier chargé :', __filename);
   console.log('Requête POST /api/diagnostic reçue:', req.body);
   const { symptoms, text, lang } = req.body;
 
@@ -33,7 +51,6 @@ exports.diagnose = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'No symptoms provided or detected.' });
   }
 
-  // Normaliser les symptômes pour gérer les accents
   finalSymptoms = finalSymptoms.map(normalizeString);
   console.log('Symptômes finaux après normalisation :', finalSymptoms);
   console.log('Langue :', lang);
@@ -41,15 +58,18 @@ exports.diagnose = asyncHandler(async (req, res) => {
   const inputData = JSON.stringify({ symptoms: finalSymptoms, lang });
   console.log('Données JSON envoyées au script Python :', inputData);
 
+  const pythonPath = getPythonPath(); // Détecte dynamiquement le chemin
   const options = {
     mode: 'text',
-    pythonPath: 'C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python311\\python.exe',
+    pythonPath: pythonPath,
     pythonOptions: ['-u'],
     scriptPath: path.resolve(__dirname, '..'),
     args: [inputData]
   };
 
   console.log('Exécution de PythonShell.run avec options :', options);
+  console.log('🚀 Chemin Python utilisé :', options.pythonPath);
+
   try {
     const result = await new Promise((resolve, reject) => {
       const shell = new PythonShell('clips_diagnose.py', options);

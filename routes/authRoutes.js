@@ -25,15 +25,15 @@
 // module.exports = router;
 const express = require('express');
 const router = express.Router();
-const { register, login, updateUserProfile, getUserProfile, searchDoctorsByCity, getSpecialites, updateDoctorSchedule, getDoctorSchedule, bookAppointment, getDoctorScheduleForPatient, getAllUsers, updateUser, deleteUser, validateDoctorLicense, getDoctorsBySpecialty } = require('../controllers/authController');
+const { register, login, updateUserProfile, getUserProfile, searchDoctorsByCity, getSpecialites, updateDoctorSchedule, getDoctorSchedule, bookAppointment, getDoctorScheduleForPatient, getAllUsers, updateUser, deleteUser, validateDoctorLicense, getDoctorsBySpecialty, forgotPassword, resetPassword} = require('../controllers/authController');
 const { send2FACode, verify2FACode } = require('../controllers/2faImplementationController');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
 router.post('/register', register);
 router.post('/login', login);
-router.post('/2fa/send', send2FACode); // New 2FA send endpoint
-router.post('/2fa/verify', verify2FACode); // New 2FA verify endpoint
+router.post('/2fa/send', send2FACode); 
+router.post('/2fa/verify', verify2FACode);
 router.put('/profile', authMiddleware, updateUserProfile);
 router.get('/profile', authMiddleware, getUserProfile);
 router.get('/search-doctors', searchDoctorsByCity);
@@ -43,7 +43,8 @@ router.get('/schedule/:doctorId', authMiddleware, getDoctorSchedule);
 router.get('/schedule-for-patient/:doctorId', authMiddleware, getDoctorScheduleForPatient);
 router.post('/appointment', authMiddleware, bookAppointment);
 router.get('/doctors-by-specialty', getDoctorsBySpecialty);
-
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 // Routes pour admin
 router.get('/users', authMiddleware, adminMiddleware, getAllUsers);
 router.put('/users/:userId', authMiddleware, adminMiddleware, updateUser);
