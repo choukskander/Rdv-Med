@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# 🏥 Plateforme de Prise de Rendez-vous Médicaux avec Chatbot et Diagnostic IA
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Un projet full-stack MERN & Python visant à transformer l’accès aux soins en Tunisie.**
 
-## Available Scripts
+> Dépôt GitHub : [Rdv-Med](https://github.com/choukskander/Rdv-Med.git)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🧠 Résumé du Projet
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Cette plateforme vise à faciliter l’accès aux soins grâce à :
+- Un **système centralisé de prise de rendez-vous médicaux**.
+- Un **chatbot médical intelligent** capable d’analyser les symptômes.
+- Un **module IA** pour la prédiction de maladies basé sur des jeux de données médicaux.
+- Une **interface fluide et sécurisée** pour les patients et les professionnels de santé.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🎯 Objectifs Clés
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 🔽 Réduction du délai de prise de rendez-vous.
+- 💬 Diagnostic préliminaire automatisé via IA.
+- 🗂️ Accès centralisé à un annuaire de médecins certifiés.
+- 🔐 Sécurité des données conforme au RGPD.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🧩 Fonctionnalités Principales
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Gestion de Rendez-vous
+- Recherche avancée de médecins par spécialité et localisation (Leaflet).
+- Calendrier interactif et notifications.
+- Système de rappels via email (Nodemailer).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Annuaire Médical
+- Profils vérifiés, avis patients.
+- Créneaux de consultation configurables par les professionnels.
 
-### `npm run eject`
+### 3. Chatbot & IA Médicale
+- Analyse de texte libre en français/arabe dialectal.
+- Prédiction de maladies (modèles IA intégrés).
+- Recommandations et alertes en cas de symptômes graves.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 4. Tableau de Bord Patient
+- Visualisation de l’historique médical.
+- Graphiques évolutifs des symptômes (Chart.js).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 5. Visioconférences Médicales
+- Intégration de la Jitsi Meet API pour les consultations à distance.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🧱 Architecture
 
-## Learn More
+- **Frontend** (branche `Client`, dossier `rdv-app`)  
+  ⚙️ Technologies : React.js, Chart.js, Leaflet, Jitsi Meet API
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- **Backend** (branche `Server`)  
+  ⚙️ Technologies : Node.js, Express.js, MongoDB, Nodemailer
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🚀 Installation Locale
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 1. Cloner le projet
+```bash
+git clone https://github.com/choukskander/Rdv-Med.git
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 2. Installer et lancer le Backend
+cd NodeJS
+npm install
+npm run dev
+### 3. Installer et lancer le Frontend
+cd rdv-app
+npm install
+npm start
